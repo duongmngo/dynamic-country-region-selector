@@ -21,14 +21,12 @@ class DynamicLevelLocationSelector extends Component {
   };
 
   async componentDidMount() {
-    console.log("Country", Country);
     let { countryCode } = this.props;
     let CountryRegionData = {};
     if (countryCode === "" || !countryCode) {
       const infoLocation = await this.detectLocation();
       countryCode = get(infoLocation, "country_code");
     }
-    console.log("countryCode", countryCode);
     CountryRegionData = await this.getCountryRegionData(countryCode);
     this.setState({
       CountryRegionData,
