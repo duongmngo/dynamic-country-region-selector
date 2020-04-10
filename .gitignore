@@ -6,4 +6,4 @@
 npm-debug.log*
 /**/package-lock.json
 /**/yarn.lock
-/**/yarn-error.lock
+/**/yarn-error.log
