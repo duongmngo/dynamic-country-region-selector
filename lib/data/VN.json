@@ -1,0 +1,47 @@
+{
+  "settings": {
+    "labelLevels": ["City/Province", "District", "Ward"]
+  },
+  "data": [
+    {
+      "name": "HCM",
+      "code": "79",
+      "nextLevels": [
+        {
+          "name": "Quận 1",
+          "code": "760",
+          "nextLevels": [
+            {
+              "name" : "Tân Định",
+              "code" : "26734"
+            },
+            {
+              "name" : "Đa Kao",
+              "code" : "26737"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cần Thơ",
+      "code": "92",
+      "nextLevels": [
+        {
+          "name": "Ninh Kiều",
+          "code": "916",
+          "nextLevels": [
+            {
+              "name" : "Cái Khê",
+              "code" : "31117"
+            },
+            {
+              "name" : "An Hòa",
+              "code" : "31120"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "settings": {
+    "labelLevels": ["isLand"]
+  },
+  "data": [
+    {
+      "name": "Central Singapore",
+      "code": "01"
+    },
+    {
+      "name": "North East",
+      "code": "02"
+    },
+    {
+      "name": "North West",
+      "code": "03"
+    },
+    {
+      "name": "South East",
+      "code": "04"
+    },
+    {
+      "name": "South West",
+      "code": "05"
+    }
+  ]
+}

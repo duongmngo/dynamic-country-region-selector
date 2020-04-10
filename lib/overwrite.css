@@ -1,0 +1,20 @@
+/* 
+.country-region .ant-select-selection--single {
+  height: 25px !important;
+}
+
+.country-region .ant-select-selection__rendered {
+  line-height: 25px;
+}
+
+.country-region .ant-select-selection__placeholder,
+.ant-select-search__field__placeholder {
+  font-family: Roboto-light;
+  font-size: 15px !important;
+  font-weight: normal !important;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.2 !important;
+  letter-spacing: normal;
+  color: #999999;
+} */
