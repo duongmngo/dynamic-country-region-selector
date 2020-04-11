@@ -25,12 +25,10 @@
     "lodash": "^4.17.15",
     "node-sass": "^4.13.0",
     "public-ip": "^4.0.1",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.12.0"
   },
   "peerDependencies": {
-    "react": "16.x",
-    "react-dom": "^16.12.0"
+    "react": "16.x"
   },
   "devDependencies": {
     "install-peers": "^1.0.3",
