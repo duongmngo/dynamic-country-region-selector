@@ -3,7 +3,7 @@ module.exports = {
   npm: {
     esModules: true,
     umd: {
-      global: "y",
+      global: "country-region",
       externals: {
         react: "React"
       }
@@ -11,14 +11,10 @@ module.exports = {
   },
   webpack: {
     rules: {
-      svg: {
-        loader: "svg-inline-loader",
-        options: { classPrefix: true }
-      },
       "sass-css": {
         modules: true,
         localIdentName: "[name]__[local]__[hash:base64:5]"
       }
-    },
+    }
   }
 };

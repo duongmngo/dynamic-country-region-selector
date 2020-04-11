@@ -1,9 +1,8 @@
 import React, { Component, lazy } from "react";
 import PropTypes from "prop-types";
-import styles from "./styles.scss";
+import styles from "./country-region.scss";
 import { Spin } from "antd";
 import { get, isUndefined, isEqual, size, find } from "lodash";
-import "./overwrite.css";
 import "antd/dist/antd.css";
 import Selector from "./components/selector";
 import Country from "./data/country";

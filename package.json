@@ -1,7 +1,7 @@
 {
-  "name": "country-region",
+  "name": "country-region-selector",
   "version": "1.0.0",
-  "description": "country-region React component",
+  "description": "country-region-selector React component",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -36,8 +36,7 @@
     "install-peers": "^1.0.3",
     "install-peers-cli": "^2.2.0",
     "nwb": "0.23.x",
-    "nwb-sass": "^0.9.0",
-    "svg-inline-loader": "^0.8.2"
+    "nwb-sass": "^0.9.0"
   },
   "author": "",
   "homepage": "",
