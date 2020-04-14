@@ -1,13 +1,9 @@
 import React, { Component, lazy } from "react";
 import PropTypes from "prop-types";
 import styles from "./country-region.scss";
-import { Spin } from "antd";
 import { get, isUndefined, isEqual, size, find } from "lodash";
-import "antd/dist/antd.css";
 import Selector from "./components/selector";
 import Country from "./data/country";
-import { LoadingOutlined } from "@ant-design/icons";
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 const publicIp = require("public-ip");
 class DynamicLevelLocationSelector extends Component {
   constructor(props) {
@@ -27,6 +23,7 @@ class DynamicLevelLocationSelector extends Component {
       countryCode = get(infoLocation, "country_code");
     }
     CountryRegionData = await this.getCountryRegionData(countryCode);
+    console.log("CountryRegionData", CountryRegionData);
     this.setState({
       CountryRegionData,
       isGettingInitialData: true,
@@ -35,8 +32,9 @@ class DynamicLevelLocationSelector extends Component {
   }
 
   detectLocation = async () => {
+    const { IP_STACK_KEY } = this.props;
     const ip = (await publicIp.v4()) || (await publicIp.v6());
-    const info = fetch(` http://api.ipstack.com/${ip}?access_key=e2d17540fe96dff711309fe8f1cd3589`).then(response => response.json());
+    const info = fetch(` http://api.ipstack.com/${ip}?access_key=${IP_STACK_KEY}`).then(response => response.json());
     return info;
   };
 
@@ -55,6 +53,14 @@ class DynamicLevelLocationSelector extends Component {
     let { valueSelected } = this.state;
     const oldData = get(valueSelected, `[${index}]`);
     const isDiff = isEqual(oldData, value);
+    if (get(value, "code") === "") {
+      valueSelected = valueSelected.filter((element, position) => position < index);
+      this.setState({
+        valueSelected
+      });
+      onChange({ value: valueSelected, labelLevels });
+      return;
+    }
     if (isUndefined(oldData)) {
       valueSelected[index] = value;
       this.setState({
@@ -72,6 +78,28 @@ class DynamicLevelLocationSelector extends Component {
       onChange({ value: valueSelected, labelLevels });
       return;
     }
+  };
+
+  getDefaultOption = title => {
+    const { showDefaultOption, defaultOptionLabel } = this.props;
+    if (!showDefaultOption) {
+      return null;
+    }
+    return (
+      <option value="" key="default">
+        {`${defaultOptionLabel}${title || ""}`}
+      </option>
+    );
+  };
+
+  getDataOptions = listData => {
+    return (listData || []).map((element, position) => {
+      return (
+        <option key={position} value={get(element, "code")}>
+          {get(element, "name")}
+        </option>
+      );
+    });
   };
 
   getDataNextLevel = (data, index) => {
@@ -111,15 +139,17 @@ class DynamicLevelLocationSelector extends Component {
                 key: index,
                 value: get(valueSelected[index], `code`),
                 customLayout,
-                componentLevels: get(componentLevels, `level${index}`)
+                componentLevels: get(componentLevels, `level${index}`),
+                getDataOptions: this.getDataOptions,
+                getDefaultOption: this.getDefaultOption
               };
               return <Selector {...attrs} />;
             })
           ) : (
-            <Selector />
+            <Selector getDataOptions={this.getDataOptions} getDefaultOption={this.getDefaultOption} listData={[]} />
           )
         ) : (
-          <Spin indicator={antIcon} />
+          <div className={styles.loader}></div>
         )}
       </div>
     );
@@ -130,14 +160,20 @@ DynamicLevelLocationSelector.propTypes = {
   valueCountry: PropTypes.string,
   onChange: PropTypes.func,
   customLayout: PropTypes.string,
-  componentLevels: PropTypes.object
+  componentLevels: PropTypes.object,
+  showDefaultOption: PropTypes.bool,
+  defaultOptionLabel: PropTypes.string,
+  IP_STACK_KEY: PropTypes.string
 };
 
 DynamicLevelLocationSelector.defaultProps = {
   countryCode: "",
   onChange: () => {},
   customLayout: "horizontal",
-  componentLevels: {}
+  componentLevels: { level0: {}, level1: {}, level2: {} },
+  showDefaultOption: true,
+  defaultOptionLabel: "Select ",
+  IP_STACK_KEY: ""
 };
 
 export default DynamicLevelLocationSelector;
