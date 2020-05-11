@@ -11,7 +11,7 @@ class DynamicLevelLocationSelector extends Component {
   }
   state = {
     CountryRegionData: {},
-    valueSelected: [],
+    value: [],
     isGettingInitialData: false
   };
 
@@ -47,35 +47,26 @@ class DynamicLevelLocationSelector extends Component {
     return get(data, "default") || [];
   };
 
-  handleChangeValue = (index, value) => {
+  handleChangeValue = (index, selectedValue) => {
     const { onChange } = this.props;
     const { labelLevels } = this.state;
-    let { valueSelected } = this.state;
-    const oldData = get(valueSelected, `[${index}]`);
-    const isDiff = isEqual(oldData, value);
-    if (get(value, "code") === "") {
-      valueSelected = valueSelected.filter((element, position) => position < index);
-      this.setState({
-        valueSelected
-      });
-      onChange({ value: valueSelected, labelLevels });
+    let { value } = this.props;
+    const oldData = get(value, `[${index}]`);
+    const isDiff = isEqual(oldData, selectedValue);
+    if (get(selectedValue, "code") === "") {
+      value = value.filter((element, position) => position < index);
+      onChange({ value: value, labelLevels });
       return;
     }
     if (isUndefined(oldData)) {
-      valueSelected[index] = value;
-      this.setState({
-        valueSelected: [...valueSelected]
-      });
-      onChange({ value: valueSelected, labelLevels });
+      value[index] = selectedValue;
+      onChange({ value: value, labelLevels });
       return;
     }
     if (!isDiff) {
-      valueSelected[index] = value;
-      valueSelected = valueSelected.filter((element, position) => position <= index);
-      this.setState({
-        valueSelected
-      });
-      onChange({ value: valueSelected, labelLevels });
+      value[index] = selectedValue;
+      value = value.filter((element, position) => position <= index);
+      onChange({ value: value, labelLevels });
       return;
     }
   };
@@ -103,22 +94,22 @@ class DynamicLevelLocationSelector extends Component {
   };
 
   getDataNextLevel = (data, index) => {
-    let { valueSelected } = this.state;
-    if (size(valueSelected) < index) {
+    let { value } = this.props;
+    if (size(value) < index) {
       return [];
     }
     let i = 0;
     let tamp = data;
     while (i < index) {
-      tamp = get(find(tamp, { code: `${valueSelected[i].code}` }), "nextLevels");
+      tamp = get(find(tamp, { code: `${value[i].code}` }), "nextLevels");
       i++;
     }
     return tamp;
   };
 
   render() {
-    let { customLayout, componentLevels } = this.props;
-    const { CountryRegionData, valueSelected, isGettingInitialData } = this.state;
+    let { customLayout, componentLevels, value } = this.props;
+    const { CountryRegionData, isGettingInitialData } = this.state;
     const labelLevels = get(CountryRegionData, "settings.labelLevels");
     const data = get(CountryRegionData, "data");
     customLayout = customLayout === "horizontal" ? customLayout : "vertical";
@@ -126,6 +117,8 @@ class DynamicLevelLocationSelector extends Component {
       flexDirection: customLayout === "vertical" ? "column" : "row",
       justifyContent: "space-evenly"
     };
+
+    console.log("checked", value);
     return (
       <div className={`${styles.countryRegion} country-region`} style={{ ...styleSheet }}>
         {isGettingInitialData ? (
@@ -137,7 +130,7 @@ class DynamicLevelLocationSelector extends Component {
                 title: element,
                 handleChangeValue: this.handleChangeValue,
                 key: index,
-                value: get(valueSelected[index], `code`),
+                value: get(value[index], `code`),
                 customLayout,
                 componentLevels: get(componentLevels, `level${index}`),
                 getDataOptions: this.getDataOptions,
@@ -157,13 +150,14 @@ class DynamicLevelLocationSelector extends Component {
 }
 
 DynamicLevelLocationSelector.propTypes = {
-  valueCountry: PropTypes.string,
+  countryCode: PropTypes.string,
   onChange: PropTypes.func,
   customLayout: PropTypes.string,
   componentLevels: PropTypes.object,
   showDefaultOption: PropTypes.bool,
   defaultOptionLabel: PropTypes.string,
-  IP_STACK_KEY: PropTypes.string
+  IP_STACK_KEY: PropTypes.string,
+  value: PropTypes.array
 };
 
 DynamicLevelLocationSelector.defaultProps = {
@@ -173,7 +167,8 @@ DynamicLevelLocationSelector.defaultProps = {
   componentLevels: { level0: {}, level1: {}, level2: {} },
   showDefaultOption: true,
   defaultOptionLabel: "Select ",
-  IP_STACK_KEY: ""
+  IP_STACK_KEY: "",
+  value: []
 };
 
 export default DynamicLevelLocationSelector;
