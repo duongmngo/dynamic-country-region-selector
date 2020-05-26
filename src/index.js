@@ -18,23 +18,42 @@ class DynamicLevelLocationSelector extends Component {
   async componentDidMount() {
     let { countryCode } = this.props;
     let CountryRegionData = {};
+    const ip = (await publicIp.v4()) || (await publicIp.v6());
     if (countryCode === "" || !countryCode) {
-      const infoLocation = await this.detectLocation();
-      countryCode = get(infoLocation, "country_code");
+      const infoLocation = await this.detectLocationIpApi()
+        .then(value => value)
+        .catch(() => this.detectLocationExtremeIp(ip))
+        .then(value => value)
+        .catch(() => this.detectLocationIpStack(ip))
+        .then(value => value);
+      countryCode = get(infoLocation, "country_code") || get(infoLocation, "countryCode");
     }
     CountryRegionData = await this.getCountryRegionData(countryCode);
-    console.log("CountryRegionData", CountryRegionData);
     this.setState({
       CountryRegionData,
-      isGettingInitialData: true,
-      labelLevels: get(CountryRegionData, "settings.labelLevels")
+      isGettingInitialData: true
     });
   }
 
-  detectLocation = async () => {
+  detectLocationIpStack = async ip => {
     const { IP_STACK_KEY } = this.props;
-    const ip = (await publicIp.v4()) || (await publicIp.v6());
-    const info = fetch(` http://api.ipstack.com/${ip}?access_key=${IP_STACK_KEY}`).then(response => response.json());
+    const info = fetch(` http://api.ipstack.com/${ip}?access_key=${IP_STACK_KEY}`).then(res => res.json());
+    return info;
+  };
+
+  detectLocationExtremeIp = async ip => {
+    const info = fetch(`https://extreme-ip-lookup.com/json/${ip}`).then(async res => {
+      res = await res.json();
+      return res.status === "fail" ? Promise.reject(res) : Promise.resolve(res);
+    });
+    return info;
+  };
+
+  detectLocationIpApi = async () => {
+    const info = fetch(`http://ip-api.com/json`).then(async res => {
+      res = await res.json();
+      return res.status === "fail" ? Promise.reject(res) : Promise.resolve(res);
+    });
     return info;
   };
 
@@ -49,7 +68,8 @@ class DynamicLevelLocationSelector extends Component {
 
   handleChangeValue = (index, selectedValue) => {
     const { onChange } = this.props;
-    const { labelLevels } = this.state;
+    const { CountryRegionData } = this.state;
+    const labelLevels = get(CountryRegionData, "settings.labelLevels");
     let { value } = this.props;
     const oldData = get(value, `[${index}]`);
     const isDiff = isEqual(oldData, selectedValue);
@@ -117,8 +137,6 @@ class DynamicLevelLocationSelector extends Component {
       flexDirection: customLayout === "vertical" ? "column" : "row",
       justifyContent: "space-evenly"
     };
-
-    console.log("checked", value);
     return (
       <div className={`${styles.countryRegion} country-region`} style={{ ...styleSheet }}>
         {isGettingInitialData ? (

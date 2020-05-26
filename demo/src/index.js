@@ -8,7 +8,6 @@ export default class Demo extends Component {
     value: []
   };
   handleChangeValue = e => {
-    console.log("value", e);
     this.setState({ value: e.value });
   };
   render() {
