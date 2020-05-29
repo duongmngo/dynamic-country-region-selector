@@ -4,6 +4,8 @@ import styles from "./country-region.scss";
 import { get, isUndefined, isEqual, size, find } from "lodash";
 import Selector from "./components/selector";
 import Country from "./data/country";
+import wait from "./utils/wait";
+import detectLocationFromIp from "./utils/detect-country-code-from-ip";
 const publicIp = require("public-ip");
 class DynamicLevelLocationSelector extends Component {
   constructor(props) {
@@ -16,17 +18,16 @@ class DynamicLevelLocationSelector extends Component {
   };
 
   async componentDidMount() {
-    let { countryCode } = this.props;
+    let { countryCode, IP_STACK_KEY } = this.props;
     let CountryRegionData = {};
     const ip = (await publicIp.v4()) || (await publicIp.v6());
     if (countryCode === "" || !countryCode) {
-      const infoLocation = await this.detectLocationIpApi()
-        .then(value => value)
-        .catch(() => this.detectLocationExtremeIp(ip))
-        .then(value => value)
-        .catch(() => this.detectLocationIpStack(ip))
-        .then(value => value);
-      countryCode = get(infoLocation, "country_code") || get(infoLocation, "countryCode");
+      try {
+        const res = await Promise.race([detectLocationFromIp(ip, IP_STACK_KEY), wait(1000)]);
+        countryCode = get(res, "countryCode");
+      } catch (error) {
+        return error;
+      }
     }
     CountryRegionData = await this.getCountryRegionData(countryCode);
     this.setState({
@@ -34,28 +35,6 @@ class DynamicLevelLocationSelector extends Component {
       isGettingInitialData: true
     });
   }
-
-  detectLocationIpStack = async ip => {
-    const { IP_STACK_KEY } = this.props;
-    const info = fetch(` http://api.ipstack.com/${ip}?access_key=${IP_STACK_KEY}`).then(res => res.json());
-    return info;
-  };
-
-  detectLocationExtremeIp = async ip => {
-    const info = fetch(`https://extreme-ip-lookup.com/json/${ip}`).then(async res => {
-      res = await res.json();
-      return res.status === "fail" ? Promise.reject(res) : Promise.resolve(res);
-    });
-    return info;
-  };
-
-  detectLocationIpApi = async () => {
-    const info = fetch(`http://ip-api.com/json`).then(async res => {
-      res = await res.json();
-      return res.status === "fail" ? Promise.reject(res) : Promise.resolve(res);
-    });
-    return info;
-  };
 
   getCountryRegionData = async location => {
     const isExist = Country.indexOf(location) === -1;
