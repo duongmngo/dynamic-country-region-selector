@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 
-import DynamicLevelLocationSelector from "../../src";
+import { DynamicLevelLocationSelector } from "../../src";
 
 export default class Demo extends Component {
   state = {
     value: []
   };
   handleChangeValue = e => {
+    console.log(e);
     this.setState({ value: e.value });
   };
   render() {
