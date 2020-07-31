@@ -1,7 +1,7 @@
 import React, { Component, lazy } from "react";
 import PropTypes from "prop-types";
 import styles from "./country-region.scss";
-import { get, isUndefined, isEqual, size, find } from "lodash";
+import { get, isUndefined, isEqual, size, find, isEmpty } from "lodash";
 import Selector from "./components/selector";
 import Country from "./data/country";
 import wait from "./utils/wait";
@@ -21,7 +21,7 @@ class DynamicLevelLocationSelector extends Component {
     let { countryCode, IP_STACK_KEY } = this.props;
     let CountryRegionData = {};
     const ip = (await publicIp.v4()) || (await publicIp.v6());
-    if (countryCode === "" || !countryCode) {
+    if (isEmpty(countryCode)) {
       try {
         const res = await Promise.race([detectLocationFromIp(ip, IP_STACK_KEY), wait(1000)]);
         countryCode = get(res, "countryCode");
@@ -29,7 +29,7 @@ class DynamicLevelLocationSelector extends Component {
         return error;
       }
     }
-    CountryRegionData = await this.getCountryRegionData(countryCode);
+    CountryRegionData = await this.getCountryRegionData(countryCode.toUpperCase());
     this.setState({
       CountryRegionData,
       isGettingInitialData: true
@@ -37,12 +37,12 @@ class DynamicLevelLocationSelector extends Component {
   }
 
   getCountryRegionData = async location => {
-    const isExist = Country.indexOf(location) === -1;
-    if (isExist) {
-      return [];
+    const isExist = Country.indexOf(location) !== -1;
+    if (!isExist) {
+      return {};
     }
     const data = await import(`./data/${location}.json`);
-    return get(data, "default") || [];
+    return get(data, "default") || {};
   };
 
   handleChangeValue = (index, selectedValue) => {
@@ -137,7 +137,7 @@ class DynamicLevelLocationSelector extends Component {
               return <Selector {...attrs} />;
             })
           ) : (
-            <Selector getDataOptions={this.getDataOptions} getDefaultOption={this.getDefaultOption} listData={[]} />
+            <Selector getDataOptions={this.getDataOptions} getDefaultOption={this.getDefaultOption} listData={[]} componentLevels={{}} />
           )
         ) : (
           <div className={styles.loader}></div>
