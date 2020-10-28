@@ -19,10 +19,11 @@ class DynamicLevelLocationSelector extends Component {
 
   async componentDidMount() {
     let { countryCode, IP_STACK_KEY } = this.props;
+    console.log("countryCode", countryCode);
     let CountryRegionData = {};
-    const ip = (await publicIp.v4()) || (await publicIp.v6());
     if (isEmpty(countryCode)) {
       try {
+        const ip = (await publicIp.v4()) || (await publicIp.v6());
         const res = await Promise.race([detectLocationFromIp(ip, IP_STACK_KEY), wait(1000)]);
         countryCode = get(res, "countryCode");
       } catch (error) {
