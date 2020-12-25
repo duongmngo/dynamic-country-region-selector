@@ -19,7 +19,6 @@ class DynamicLevelLocationSelector extends Component {
 
   async componentDidMount() {
     let { countryCode, IP_STACK_KEY } = this.props;
-    console.log("countryCode123", countryCode);
     let CountryRegionData = {};
     if (isEmpty(countryCode)) {
       try {
@@ -39,7 +38,7 @@ class DynamicLevelLocationSelector extends Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-    if (nextProps.countryCode !== this.state.countryCode) {
+    if (nextProps.countryCode !== this.state.countryCode && !isEmpty(nextProps.countryCode)) {
       const CountryRegionData = await this.getCountryRegionData(nextProps.countryCode.toUpperCase());
       this.setState({
         CountryRegionData,

@@ -21,8 +21,7 @@ export default class Demo extends Component {
         <DynamicLevelLocationSelector
           value={this.state.value}
           onChange={this.handleChangeValue}
-          // IP_STACK_KEY="e2d17540fe96dff711309fe8f1cd3589"
-          countryCode="US"
+          IP_STACK_KEY="e2d17540fe96dff711309fe8f1cd3589"
           componentLevels={{ level0: {}, level1: {}, level2: {} }}
         />
       </div>
