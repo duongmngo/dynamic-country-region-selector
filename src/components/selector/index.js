@@ -1,6 +1,6 @@
 import React from "react";
 import { get, find, isUndefined } from "lodash";
-import styles from "./styles.scss";
+import styles from "./styles.module.scss";
 export default function Selector({
   index,
   listData,

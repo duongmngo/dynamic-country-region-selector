@@ -1,44 +1,6 @@
-"use strict";
-
-exports.__esModule = true;
-
-var _regenerator = require("babel-runtime/regenerator");
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
+import _regeneratorRuntime from "babel-runtime/regenerator";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require("react");
-
-var _react2 = _interopRequireDefault(_react);
-
-var _propTypes = require("prop-types");
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _countryRegionModule = require("./country-region.module.scss");
-
-var _countryRegionModule2 = _interopRequireDefault(_countryRegionModule);
-
-var _lodash = require("lodash");
-
-var _selector = require("./components/selector");
-
-var _selector2 = _interopRequireDefault(_selector);
-
-var _country = require("./data/country");
-
-var _country2 = _interopRequireDefault(_country);
-
-var _wait = require("./utils/wait");
-
-var _wait2 = _interopRequireDefault(_wait);
-
-var _detectCountryCodeFromIp = require("./utils/detect-country-code-from-ip");
-
-var _detectCountryCodeFromIp2 = _interopRequireDefault(_detectCountryCodeFromIp);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
@@ -48,6 +10,14 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+import React, { Component, lazy } from "react";
+import PropTypes from "prop-types";
+import styles from "./country-region.module.scss";
+import { get, isUndefined, isEqual, size, find, isEmpty } from "lodash";
+import Selector from "./components/selector";
+import Country from "./data/country";
+import wait from "./utils/wait";
+import detectLocationFromIp from "./utils/detect-country-code-from-ip";
 var publicIp = require("public-ip");
 
 var DynamicLevelLocationSelector = function (_Component) {
@@ -67,13 +37,13 @@ var DynamicLevelLocationSelector = function (_Component) {
     };
 
     _this.getCountryRegionData = function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(location) {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(location) {
         var isExist, data;
-        return _regenerator2.default.wrap(function _callee$(_context) {
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                isExist = _country2.default.indexOf(location) !== -1;
+                isExist = Country.indexOf(location) !== -1;
 
                 if (isExist) {
                   _context.next = 3;
@@ -88,7 +58,7 @@ var DynamicLevelLocationSelector = function (_Component) {
 
               case 5:
                 data = _context.sent;
-                return _context.abrupt("return", (0, _lodash.get)(data, "default") || {});
+                return _context.abrupt("return", get(data, "default") || {});
 
               case 7:
               case "end":
@@ -107,19 +77,19 @@ var DynamicLevelLocationSelector = function (_Component) {
       var onChange = _this.props.onChange;
       var CountryRegionData = _this.state.CountryRegionData;
 
-      var labelLevels = (0, _lodash.get)(CountryRegionData, "settings.labelLevels");
+      var labelLevels = get(CountryRegionData, "settings.labelLevels");
       var value = _this.props.value;
 
-      var oldData = (0, _lodash.get)(value, "[" + index + "]");
-      var isDiff = (0, _lodash.isEqual)(oldData, selectedValue);
-      if ((0, _lodash.get)(selectedValue, "code") === "") {
+      var oldData = get(value, "[" + index + "]");
+      var isDiff = isEqual(oldData, selectedValue);
+      if (get(selectedValue, "code") === "") {
         value = value.filter(function (element, position) {
           return position < index;
         });
         onChange({ value: value, labelLevels: labelLevels });
         return;
       }
-      if ((0, _lodash.isUndefined)(oldData)) {
+      if (isUndefined(oldData)) {
         value[index] = selectedValue;
         onChange({ value: value, labelLevels: labelLevels });
         return;
@@ -142,7 +112,7 @@ var DynamicLevelLocationSelector = function (_Component) {
       if (!showDefaultOption) {
         return null;
       }
-      return _react2.default.createElement(
+      return React.createElement(
         "option",
         { value: "", key: "default", hidden: true },
         !isCustomPlaceholder ? "" + defaultOptionLabel + (placeholder || "") : "" + placeholder
@@ -151,10 +121,10 @@ var DynamicLevelLocationSelector = function (_Component) {
 
     _this.getDataOptions = function (listData) {
       return (listData || []).map(function (element, position) {
-        return _react2.default.createElement(
+        return React.createElement(
           "option",
-          { key: position, value: (0, _lodash.get)(element, "code") },
-          (0, _lodash.get)(element, "name")
+          { key: position, value: get(element, "code") },
+          get(element, "name")
         );
       });
     };
@@ -162,13 +132,13 @@ var DynamicLevelLocationSelector = function (_Component) {
     _this.getDataNextLevel = function (data, index) {
       var value = _this.props.value;
 
-      if ((0, _lodash.size)(value) < index) {
+      if (size(value) < index) {
         return [];
       }
       var i = 0;
       var tamp = data;
       while (i < index) {
-        tamp = (0, _lodash.get)((0, _lodash.find)(tamp, { code: "" + value[i].code }), "nextLevels");
+        tamp = get(find(tamp, { code: "" + value[i].code }), "nextLevels");
         i++;
       }
       return tamp;
@@ -178,17 +148,17 @@ var DynamicLevelLocationSelector = function (_Component) {
   }
 
   DynamicLevelLocationSelector.prototype.componentDidMount = function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee2() {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2() {
       var _props, countryCode, IP_STACK_KEY, CountryRegionData, ip, res;
 
-      return _regenerator2.default.wrap(function _callee2$(_context2) {
+      return _regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               _props = this.props, countryCode = _props.countryCode, IP_STACK_KEY = _props.IP_STACK_KEY;
               CountryRegionData = {};
 
-              if (!(0, _lodash.isEmpty)(countryCode)) {
+              if (!isEmpty(countryCode)) {
                 _context2.next = 21;
                 break;
               }
@@ -214,12 +184,12 @@ var DynamicLevelLocationSelector = function (_Component) {
             case 11:
               ip = _context2.t0;
               _context2.next = 14;
-              return Promise.race([(0, _detectCountryCodeFromIp2.default)(ip, IP_STACK_KEY), (0, _wait2.default)(1000)]);
+              return Promise.race([detectLocationFromIp(ip, IP_STACK_KEY), wait(1000)]);
 
             case 14:
               res = _context2.sent;
 
-              countryCode = (0, _lodash.get)(res, "countryCode");
+              countryCode = get(res, "countryCode");
               _context2.next = 21;
               break;
 
@@ -257,13 +227,13 @@ var DynamicLevelLocationSelector = function (_Component) {
   }();
 
   DynamicLevelLocationSelector.prototype.componentWillReceiveProps = function () {
-    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee3(nextProps) {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(nextProps) {
       var CountryRegionData;
-      return _regenerator2.default.wrap(function _callee3$(_context3) {
+      return _regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              if (!(nextProps.countryCode !== this.state.countryCode && !(0, _lodash.isEmpty)(nextProps.countryCode))) {
+              if (!(nextProps.countryCode !== this.state.countryCode && !isEmpty(nextProps.countryCode))) {
                 _context3.next = 5;
                 break;
               }
@@ -305,47 +275,47 @@ var DynamicLevelLocationSelector = function (_Component) {
         CountryRegionData = _state.CountryRegionData,
         isGettingInitialData = _state.isGettingInitialData;
 
-    var labelLevels = (0, _lodash.get)(CountryRegionData, "settings.labelLevels");
-    var data = (0, _lodash.get)(CountryRegionData, "data");
+    var labelLevels = get(CountryRegionData, "settings.labelLevels");
+    var data = get(CountryRegionData, "data");
     customLayout = customLayout === "horizontal" ? customLayout : "vertical";
     var styleSheet = {
       flexDirection: customLayout === "vertical" ? "column" : "row",
       justifyContent: "space-evenly"
     };
 
-    return _react2.default.createElement(
+    return React.createElement(
       "div",
-      { className: _countryRegionModule2.default.countryRegion + " country-region", style: _extends({}, styleSheet) },
-      isGettingInitialData ? (0, _lodash.size)(labelLevels) > 0 ? (labelLevels || []).map(function (element, index) {
+      { className: styles.countryRegion + " country-region", style: _extends({}, styleSheet) },
+      isGettingInitialData ? size(labelLevels) > 0 ? (labelLevels || []).map(function (element, index) {
         var attrs = {
           index: index,
           listData: index === 0 ? data : _this3.getDataNextLevel(data, index),
           title: element,
           handleChangeValue: _this3.handleChangeValue,
           key: index,
-          value: (0, _lodash.get)(value[index], "code"),
+          value: get(value[index], "code"),
           customLayout: customLayout,
-          componentLevels: (0, _lodash.get)(componentLevels, "level" + index),
+          componentLevels: get(componentLevels, "level" + index),
           getDataOptions: _this3.getDataOptions,
           getDefaultOption: _this3.getDefaultOption
         };
-        return _react2.default.createElement(_selector2.default, attrs);
-      }) : _react2.default.createElement(_selector2.default, { getDataOptions: this.getDataOptions, getDefaultOption: this.getDefaultOption, listData: [], componentLevels: {} }) : _react2.default.createElement("div", { className: _countryRegionModule2.default.loader })
+        return React.createElement(Selector, attrs);
+      }) : React.createElement(Selector, { getDataOptions: this.getDataOptions, getDefaultOption: this.getDefaultOption, listData: [], componentLevels: {} }) : React.createElement("div", { className: styles.loader })
     );
   };
 
   return DynamicLevelLocationSelector;
-}(_react.Component);
+}(Component);
 
 DynamicLevelLocationSelector.propTypes = process.env.NODE_ENV !== "production" ? {
-  countryCode: _propTypes2.default.string,
-  onChange: _propTypes2.default.func,
-  customLayout: _propTypes2.default.string,
-  componentLevels: _propTypes2.default.object,
-  showDefaultOption: _propTypes2.default.bool,
-  defaultOptionLabel: _propTypes2.default.string,
-  IP_STACK_KEY: _propTypes2.default.string,
-  value: _propTypes2.default.array
+  countryCode: PropTypes.string,
+  onChange: PropTypes.func,
+  customLayout: PropTypes.string,
+  componentLevels: PropTypes.object,
+  showDefaultOption: PropTypes.bool,
+  defaultOptionLabel: PropTypes.string,
+  IP_STACK_KEY: PropTypes.string,
+  value: PropTypes.array
 } : {};
 
 DynamicLevelLocationSelector.defaultProps = {
@@ -359,5 +329,4 @@ DynamicLevelLocationSelector.defaultProps = {
   value: []
 };
 
-exports.default = DynamicLevelLocationSelector;
-module.exports = exports["default"];
+export default DynamicLevelLocationSelector;

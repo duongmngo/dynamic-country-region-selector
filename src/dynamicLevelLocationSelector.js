@@ -1,6 +1,6 @@
 import React, { Component, lazy } from "react";
 import PropTypes from "prop-types";
-import styles from "./country-region.scss";
+import styles from "./country-region.module.scss";
 import { get, isUndefined, isEqual, size, find, isEmpty } from "lodash";
 import Selector from "./components/selector";
 import Country from "./data/country";
