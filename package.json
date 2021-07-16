@@ -1,8 +1,8 @@
 {
-  "name": "country-region-selector",
-  "version": "1.0.0",
+  "name": "dynamic-country-region-selector",
+  "version": "1.0.4",
   "description": "country-region-selector React component",
-  "main": "lib/index.js",
+  "main": "umd/dynamic-country-region-selector.js",
   "module": "es/index.js",
   "files": [
     "css",

@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 
-import { DynamicLevelLocationSelector } from "../../src";
+import Lib from "../../src";
+const { DynamicLevelLocationSelector } = Lib;
 const styleLevel3 = {
   color: "red",
-  placeholder: "select abc"
+  placeholder: "select abc",
 };
 export default class Demo extends Component {
   state = {
-    value: []
+    value: [],
   };
-  handleChangeValue = e => {
+  handleChangeValue = (e) => {
     console.log(e);
     this.setState({ value: e.value });
   };

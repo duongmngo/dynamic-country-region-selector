@@ -3,18 +3,19 @@ module.exports = {
   npm: {
     esModules: true,
     umd: {
-      global: "country-region",
+      global: "DynamicCountryRegionSelector",
       externals: {
-        react: "React"
-      }
-    }
+        react: "React",
+      },
+    },
   },
   webpack: {
+    publicPath: "https://unpkg.com/dynamic-country-region-selector@1.0.4/umd/",
     rules: {
       "sass-css": {
         modules: true,
-        localIdentName: "[name]__[local]__[hash:base64:5]"
-      }
-    }
-  }
+        localIdentName: "[name]__[local]__[hash:base64:5]",
+      },
+    },
+  },
 };
